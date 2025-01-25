@@ -30,7 +30,7 @@ const Rerouter = () => {
 
         const getIpAddress = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/get-ip`)
+                const response = await fetch(`https://linkmanager-backend.onrender.com/get-ip`)
                 // const response = await fetch('https://api.ipify.org?format=json'); // Some stupid hacky way to get IP address. 
                 const data = await response.json();
                 // console.log("dayta", data)
@@ -59,7 +59,7 @@ const Rerouter = () => {
     useEffect(() => {
         const fetchLinkData = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/link/${hash}`);
+                const response = await fetch(`https://linkmanager-backend.onrender.com/link/${hash}`);
                 const data = await response.json();
                 // console.log("dtaya ", data)
                 if (response.ok) {
@@ -72,7 +72,7 @@ const Rerouter = () => {
                     
 
                     // console.log("hoyla", clickData);
-                    await fetch(`http://localhost:5000/editclick/${hash}`, {
+                    await fetch(`https://linkmanager-backend.onrender.com/editclick/${hash}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

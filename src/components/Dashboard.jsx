@@ -38,7 +38,7 @@ const Dashboard = () => {
 
     const handleCreateLink = async () => {
         try {
-            const response = await fetch('http://localhost:5000/createlinks', {
+            const response = await fetch('https://linkmanager-backend.onrender.com/createlinks', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

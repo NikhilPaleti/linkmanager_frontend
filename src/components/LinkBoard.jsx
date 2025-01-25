@@ -24,7 +24,7 @@ const LinkBoard = () => {
   const fetchLinks = async () => {
     try {
       const username = localStorage.getItem('fp2_username');
-      const response = await fetch(`http://localhost:5000/links?username=${username}`);
+      const response = await fetch(`https://linkmanager-backend.onrender.com/links?username=${username}`);
       const data = await response.json(); 
       setLinks(data);
     } catch (error) {
@@ -34,7 +34,7 @@ const LinkBoard = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/link/${localStorage.getItem('fp2_username')}/${id}`, {
+      const response = await fetch(`https://linkmanager-backend.onrender.com/link/${localStorage.getItem('fp2_username')}/${id}`, {
         method: 'DELETE' 
       });
       
@@ -48,7 +48,7 @@ const LinkBoard = () => {
 
   const handleEdit = async (hash) => {
     try {
-      const response = await fetch(`http://localhost:5000/link/${localStorage.getItem('fp2_username')}/${hash}`);
+      const response = await fetch(`https://linkmanager-backend.onrender.com/link/${localStorage.getItem('fp2_username')}/${hash}`);
       const data = await response.json();
       setEditingLink(data);
       setFormData({
@@ -67,7 +67,7 @@ const LinkBoard = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:5000/link/${localStorage.getItem('fp2_username')}/${editingLink.short_link}`,
+        `https://linkmanager-backend.onrender.com/link/${localStorage.getItem('fp2_username')}/${editingLink.short_link}`,
         {
           method: 'PUT',
           headers: {

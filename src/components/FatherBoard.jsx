@@ -46,7 +46,7 @@ const FatherBoard = () => {
             const username = localStorage.getItem('fp2_username');
             
             try {
-                const response = await fetch(`http://localhost:5000/links?username=${username}`, {
+                const response = await fetch(`https://linkmanager-backend.onrender.com/links?username=${username}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

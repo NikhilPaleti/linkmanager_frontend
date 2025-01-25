@@ -13,7 +13,7 @@ const AnalyticBoard = () => {
   const fetchLinks = async () => {
     try {
       const username = localStorage.getItem('fp2_username');
-      const response = await fetch(`http://localhost:5000/links?username=${username}`);
+      const response = await fetch(`https://linkmanager-backend.onrender.com/links?username=${username}`);
       const data = await response.json(); 
       setLinks(data);
     } catch (error) {

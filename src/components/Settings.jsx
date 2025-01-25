@@ -9,8 +9,8 @@ const Settings = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        console.log(`http://localhost:5000/fetchuser/${localStorage.getItem('fp2_username')}`)
-        const response = await fetch(`http://localhost:5000/fetchuser/${localStorage.getItem('fp2_username')}`);
+        console.log(`https://linkmanager-backend.onrender.com/fetchuser/${localStorage.getItem('fp2_username')}`)
+        const response = await fetch(`https://linkmanager-backend.onrender.com/fetchuser/${localStorage.getItem('fp2_username')}`);
         const data = await response.json()
         console.log(data.phoneno)
         if (response.ok) {
@@ -30,7 +30,7 @@ const Settings = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/edituser/${localStorage.getItem('fp2_username')}`, {
+      const response = await fetch(`https://linkmanager-backend.onrender.com/edituser/${localStorage.getItem('fp2_username')}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ const Settings = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/deleteuser/${localStorage.getItem('fp2_username')}`, {
+      const response = await fetch(`https://linkmanager-backend.onrender.com/deleteuser/${localStorage.getItem('fp2_username')}`, {
         method: 'DELETE',
       });
       const data = await response.json();

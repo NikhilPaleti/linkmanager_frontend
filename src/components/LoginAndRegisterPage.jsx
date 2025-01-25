@@ -46,7 +46,7 @@ const LoginForm = () => {
     console.log(userData)
 
     try {
-      const response = await fetch('http://localhost:5000/login', { 
+      const response = await fetch('https://linkmanager-backend.onrender.com/login', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ const RegisterForm = () => {
 
     const userData = { username, email, phoneno, password };
     console.log(userData)
-    fetch('http://localhost:5000/register', {
+    fetch('https://linkmanager-backend.onrender.com/register', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
