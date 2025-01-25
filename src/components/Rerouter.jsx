@@ -96,7 +96,7 @@ const Rerouter = () => {
                     if (ipAddress && browserName && currentTime){
                         const clickData = {
                             click_time: currentTime,
-                            ip_addr: ipAddress,
+                            ip_addr: ipAddress.split(",")[0].trim(), //PURELY EXPERIMENTAL CODE. On Jio networks, I observed that 3 IP addrresses are returned. So this will make sure only the first is recorded.
                             user_device: browserName
                         };
                     
