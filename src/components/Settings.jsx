@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Settings = () => {
   const [username, setUsername] = useState('');
@@ -69,6 +69,7 @@ const Settings = () => {
 
   return (
     <div className="settings-container">
+      <ToastContainer></ToastContainer>
       <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
       <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
       <input type="tel" value={mobile} onChange={(e) => setMobile(e.target.value)} placeholder="Mobile No" />

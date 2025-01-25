@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../index.css'; 
+import { click } from '@testing-library/user-event/dist/click';
 
 const Rerouter = () => {
     const { hash } = useParams();
@@ -12,24 +13,7 @@ const Rerouter = () => {
     const [currentTime, setCurrentTime] = useState('');
 
     useEffect(() => {
-        const fetchLinkData = async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/link/${localStorage.getItem('fp2_username')}/${hash}`);
-                const data = await response.json();
-                // console.log("hash", data)
-                if (response.ok) {
-                    // console.log(data.original_link)
-
-                    window.location.href = data.original_link;
-                } else {
-                    console.error(data.error);
-                }
-            } catch (error) {
-                console.error('Error fetching link data:', error);
-            }
-        };
-
-        const getBrowserName = () => {
+            const getBrowserName = () => {
             const userAgent = navigator.userAgent;
             let browser = 'Unknown';
             if (userAgent.indexOf('Chrome') > -1) {
@@ -49,7 +33,7 @@ const Rerouter = () => {
                 const response = await fetch(`http://localhost:5000/get-ip`)
                 // const response = await fetch('https://api.ipify.org?format=json'); // Some stupid hacky way to get IP address. 
                 const data = await response.json();
-                console.log("dayta", data)
+                // console.log("dayta", data)
                 setIpAddress(data.ip);
             } catch (error) {
                 console.error('Error fetching IP address:', error);
@@ -58,19 +42,77 @@ const Rerouter = () => {
 
 
         const getCurrentTime = () => {
-            const now = new Date();
+            const now = new Date().toISOString();
             setCurrentTime(now.toString());
         };
-
-        fetchLinkData();
+        
         getBrowserName();
         getIpAddress();
         getCurrentTime();
-        
+
     }, [hash]);
+
+    // useEffect(()=>{
+        
+    // }, [currentTime])
+
+    useEffect(() => {
+        const fetchLinkData = async () => {
+            try {
+                const response = await fetch(`http://localhost:5000/link/${hash}`);
+                const data = await response.json();
+                // console.log("dtaya ", data)
+                if (response.ok) {
+                    if (ipAddress && browserName && currentTime){
+                        const clickData = {
+                            click_time: currentTime,
+                            ip_addr: ipAddress,
+                            user_device: browserName
+                        };
+                    
+
+                    // console.log("hoyla", clickData);
+                    await fetch(`http://localhost:5000/editclick/${hash}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ clickData }),
+                    });
+
+                    if (currentTime){
+                        var date1 = currentTime;
+                        var date2 = data.expiry_date;
+                        if (date1 < date2) {
+                            window.location.href = data.original_link;
+                          } 
+                          else if (!date2) {
+                            window.location.href = data.original_link;
+                          }
+                            else {
+                            toast.error("THE LINK IS EPIRED. LEARN TO BE FAST")
+                          }
+                        // const differenceInMilliseconds = date2 - date1;
+
+                        // const differenceInMilliseconds = data.expiry_date - currentTime;
+                        // console.log(currentTime, data.expiry_date)
+                        // console.log("who", differenceInMilliseconds)
+                    }
+                }
+                } else {
+                    console.error(data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching link data:', error);
+            }
+        };
+        
+        fetchLinkData();
+    }, [ipAddress])
 
     return (
         <div>
+            <ToastContainer></ToastContainer>
             <p>Browser: {browserName}</p>
             <p>IP Address: {ipAddress}</p>
             <p>Current Time: {currentTime}</p>

@@ -10,6 +10,7 @@ import AnalyticsIcon from '../assets/analytics.svg';
 import FatherBoard from './FatherBoard';
 import Settings from './Settings';
 import LinkBoard from './LinkBoard';
+import AnalyticBoard from './AnalyticBoard';
 
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('Dashboard');
@@ -82,11 +83,13 @@ const Dashboard = () => {
                 <div className="modal-overlay">
                     <div className="modal-content">
                         <h3>Create New Link</h3>
+                        <form className='pseudo-content' onSubmit={handleCreateLink}>
                         <input
                             type="url"
-                            placeholder="Enter URL"
+                            placeholder="Original URL"
                             value={formData.original_link}
                             onChange={(e) => setFormData({...formData, original_link: e.target.value})}
+                            required
                         />
                         <input
                             type="text"
@@ -116,8 +119,10 @@ const Dashboard = () => {
                         )}
                         <div className="modal-footer">
                             <button style={{backgroundColor:"#00000000", color: "black"}} onClick={() => setIsModalOpen(false)}>Cancel</button>
-                            <button onClick={handleCreateLink}>Confirm</button>
+                            <button>Confirm</button> 
+                        {/* onClick={handleCreateLink} */}
                         </div>
+                    </form>
                     </div>
                 </div>
             )}
@@ -138,7 +143,7 @@ const Dashboard = () => {
                 <div className="main-content">
                     {activeTab === 'Dashboard' && <FatherBoard />}
                     {activeTab === 'Links' && <LinkBoard />}
-                    {/* {activeTab === 'Analytics' && <AnalyticBoard />} */}
+                    {activeTab === 'Analytics' && <AnalyticBoard />}
                     {activeTab === 'Settings' && <Settings />}
                 </div>
             </div>

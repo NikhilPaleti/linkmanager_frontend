@@ -38,11 +38,9 @@ const LoginAndRegisterPage = () => {
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault(); 
-    // setError(""); 
 
     const userData = { username, password };
     console.log(userData)
@@ -61,7 +59,6 @@ const LoginForm = () => {
         localStorage.setItem('fp2_user_jwt', data.token);
         localStorage.setItem('fp2_username', userData.username);
         window.location.href = '/dashboard'
-        // TODO: Handle successful login (e.g., store token, redirect)
       } else {
         console.log(data)
         toast.error("Invalid credentials");
@@ -101,13 +98,10 @@ const RegisterForm = () => {
   const [phoneno, setPhoneno] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  // const [error, setError] = useState("");
 
   const handleRegister = async (e) => {
     e.preventDefault(); 
-    // setError(""); 
 
-    // Validate passwords match
     if (password !== confirmPassword) {
       toast.warn("Passwords do not match");
       return;
@@ -133,6 +127,9 @@ const RegisterForm = () => {
       .then(data => {
           // console.log('Registration successful:', data);
           toast.success('Registration successful!');
+          setTimeout(() => {
+            window.location.href = '/'
+          }, 1000);
           
       })
       .catch(error => {

@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import DeleteIcon from '../assets/delete.svg';
-import EditIcon from '../assets/pencil.svg'
+import EditIcon from '../assets/pencil.svg';
+import cpImg from '../assets/copy.svg';
 
 const LinkBoard = () => {
   const [links, setLinks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const linksPerPage = 10;
   const baseURL = window.location.origin; 
+  const [hasExpiry, setHasExpiry] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingLink, setEditingLink] = useState(null);
+  const [formData, setFormData] = useState({
+    original_link: '',
+    remarks: '',
+    expiry_date: ''
+  });
 
   useEffect(() => {
     fetchLinks();
@@ -14,7 +23,8 @@ const LinkBoard = () => {
 
   const fetchLinks = async () => {
     try {
-      const response = await fetch('http://localhost:5000/links');
+      const username = localStorage.getItem('fp2_username');
+      const response = await fetch(`http://localhost:5000/links?username=${username}`);
       const data = await response.json(); 
       setLinks(data);
     } catch (error) {
@@ -33,6 +43,46 @@ const LinkBoard = () => {
       }
     } catch (error) {
       console.error('Error deleting link:', error);
+    }
+  };
+
+  const handleEdit = async (hash) => {
+    try {
+      const response = await fetch(`http://localhost:5000/link/${localStorage.getItem('fp2_username')}/${hash}`);
+      const data = await response.json();
+      setEditingLink(data);
+      setFormData({
+        original_link: data.original_link,
+        remarks: data.remarks || '',
+        expiry_date: data.expiry_date ? new Date(data.expiry_date).toISOString().split('T')[0] : ''
+      });
+      setHasExpiry(!!data.expiry_date);
+      setShowEditModal(true);
+    } catch (error) {
+      console.error('Error fetching link details:', error);
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `http://localhost:5000/link/${localStorage.getItem('fp2_username')}/${editingLink.short_link}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (response.ok) {
+        setShowEditModal(false);
+        fetchLinks();
+      }
+    } catch (error) {
+      console.error('Error updating link:', error);
     }
   };
 
@@ -60,6 +110,7 @@ const LinkBoard = () => {
                 <th>Short URL</th>
                 <th>Remarks</th>
                 <th>Total Clicks</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -69,12 +120,24 @@ const LinkBoard = () => {
                   
                   <td>{link.original_link}</td>
                   <td>
-                    <a href={`${baseURL}/${link.short_link}`} className="short-url">
+                    <div 
+                      onClick={() => navigator.clipboard.writeText(`${baseURL}/${link.short_link}`)} 
+                      className="short-url" 
+                      style={{cursor: 'pointer'}}
+                    >
                       {`${baseURL}/${link.short_link}`}
-                    </a>
+                      <img src={cpImg} alt="Copy thingie" style={{padding:'auto', marginLeft:'0.5rem'}}/>
+                    </div>
                   </td>
                   <td>{link.remarks}</td>
-                  <td>{link.clicks}</td>
+                  <td>{link.clicks.length}</td>
+                  <td>
+                    {link.expiry_date ? (
+                      new Date() < new Date(link.expiry_date) ? 
+                        "Active" : 
+                        "Inactive"
+                    ) : "Active"}
+                  </td>
                   <td style={{display:'flex', flexDirection:'row'}}>
                     <button
                       onClick={() => handleDelete(link.short_link)}
@@ -83,10 +146,10 @@ const LinkBoard = () => {
                       <img src={DeleteIcon} style={{color:'#ff0000'}} alt="DELETE BRO" />
                     </button>
                     <button
-                      onClick={() => window.location.href = `/edit/${link._id}`}
+                      onClick={() => handleEdit(link.short_link)}
                       className="edit-button"
                     >
-                      <img src={EditIcon} style={{color:'black'}} alt="Edit thems" />
+                      <img src={EditIcon} style={{color:'black'}} alt="Edit" />
                     </button>
                   </td>
                 </tr>
@@ -124,6 +187,57 @@ const LinkBoard = () => {
             </div>
           )}
         </>
+      )}
+
+      {showEditModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Edit Link</h3>
+            <form className='pseudo-content' onSubmit={handleUpdate}>
+                <input
+                  type="url"
+                  placeholder="Original URL"
+                  value={formData.original_link}
+                  onChange={(e) => setFormData({...formData, original_link: e.target.value})}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Enter remarks"
+                  value={formData.remarks}
+                  onChange={(e) => setFormData({...formData, remarks: e.target.value})}
+                />
+                <div className="expiry-toggle">
+                    <label style={{display:"flex", flexDirection:"row", justifyContent:'space-evenly', width:"100%"}}>
+                        Link Expiration
+                        <input
+                            type="checkbox"
+                            checked={hasExpiry}
+                            style={{height:'1.5rem'}}
+                            onChange={(e) => {
+                                setHasExpiry(e.target.checked);
+                                if (!e.target.checked) {
+                                    setFormData({...formData, expiry_date: ''});
+                                }
+                            }}
+                        />
+                    </label>
+                </div>
+                {hasExpiry && (
+                    <input
+                        type="date"
+                        placeholder="Link Expiry Date"
+                        value={formData.expiry_date}
+                        onChange={(e) => setFormData({...formData, expiry_date: e.target.value})}
+                    />
+                )}
+              <div className="modal-footer">
+                <button style={{backgroundColor:"#00000000", color: "black"}} type="button" className="cancel-button" onClick={() => setShowEditModal(false)}>Cancel</button>
+                <button type="submit" className="save-button">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
