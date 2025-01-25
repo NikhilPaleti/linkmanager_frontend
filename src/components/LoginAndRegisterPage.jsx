@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import "../index.css";
-import { backImg } from "../assets/background_logreg.png";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
 const LoginAndRegisterPage = () => {
-  const [activeTab, setActiveTab] = useState("login");
+  const [activeTab, setActiveTab] = useState("register");
 
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);
@@ -11,6 +12,7 @@ const LoginAndRegisterPage = () => {
 
   return (
     <div className="login-register-container">
+      <ToastContainer></ToastContainer>
       <div className="header">
         <img src="....." alt="Main App Icon" className="app-icon"/>
         <div className="tab-selection">
@@ -34,28 +36,153 @@ const LoginAndRegisterPage = () => {
 };
 
 const LoginForm = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  // const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault(); 
+    // setError(""); 
+
+    const userData = { username, password };
+    console.log(userData)
+
+    try {
+      const response = await fetch('http://localhost:5000/login', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        toast.success("Login Success!")
+        localStorage.setItem('fp2_user_jwt', data.token);
+        localStorage.setItem('fp2_username', userData.username);
+        window.location.href = '/dashboard'
+        // TODO: Handle successful login (e.g., store token, redirect)
+      } else {
+        console.log(data)
+        toast.error("Invalid credentials");
+      }
+    } catch (error) {
+      toast.error("Network error", error) 
+    }
+  };
+
   return (
     <div className="form-container">
-      <div className="form-content">
-        <input type="email" placeholder="Email" required />
-        <input type="password" placeholder="Password" required />
+      <form className="form-content" onSubmit={handleLogin}>
+        <input 
+          type="text" 
+          placeholder="Username" 
+          value={username} 
+          onChange={(e) => setUsername(e.target.value)} 
+          required 
+        />
+        <input 
+          type="password" 
+          placeholder="Password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          required 
+        />
+        {/* {error && <div className="error-message">{error}</div>} */}
         <button type="submit">Login</button>
-      </div>
+      </form>
     </div>
   );
 };
 
 const RegisterForm = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneno, setPhoneno] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  // const [error, setError] = useState("");
+
+  const handleRegister = async (e) => {
+    e.preventDefault(); 
+    // setError(""); 
+
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      toast.warn("Passwords do not match");
+      return;
+    }
+
+    const userData = { username, email, phoneno, password };
+    console.log(userData)
+    fetch('http://localhost:5000/register', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+  })
+      .then(response => {
+          if (!response.ok) {
+              return response.json().then(err => {
+                  throw new Error(err.error || 'Network response was not ok');
+              });
+          }
+          return response.json();
+      })
+      .then(data => {
+          // console.log('Registration successful:', data);
+          toast.success('Registration successful!');
+          
+      })
+      .catch(error => {
+          console.error('There was a problem with the registration:', error);
+          toast.error('Registration failed: ' + error.message);
+      });
+      
+  };
+
   return (
     <div className="form-container">
-      <div className="form-content">
-        <input type="text" placeholder="Name" required />
-        <input type="email" placeholder="Email" required />
-        <input type="tel" placeholder="Mobile" required />
-        <input type="password" placeholder="Password" required />
-        <input type="password" placeholder="Confirm Password" required />
+      <form className="form-content" onSubmit={handleRegister}>
+        <input 
+          type="text" 
+          placeholder="Name" 
+          value={username} 
+          onChange={(e) => setUsername(e.target.value)} 
+          required 
+        />
+        <input 
+          type="email" 
+          placeholder="Email" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          required 
+        />
+        <input 
+          type="tel" 
+          placeholder="Mobile" 
+          value={phoneno} 
+          onChange={(e) => setPhoneno(e.target.value)} 
+          required 
+        />
+        <input 
+          type="password" 
+          placeholder="Password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          required 
+        />
+        <input 
+          type="password" 
+          placeholder="Confirm Password" 
+          value={confirmPassword} 
+          onChange={(e) => setConfirmPassword(e.target.value)} 
+          required 
+        />
+        {/* {error && <div className="error-message">{error}</div>} */}
         <button type="submit">Register</button>
-      </div>
+      </form>
     </div>
   );
 };

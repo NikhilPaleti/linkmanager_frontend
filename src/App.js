@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginAndRegisterPage from './components/LoginAndRegisterPage';
 import Dashboard from './components/Dashboard';
+import Rerouter from './components/Rerouter';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,6 +20,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={isLoggedIn ? <Dashboard /> : <LoginAndRegisterPage />} />
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/:hash" element={<Rerouter />} />
                 </Routes>
             </Router>
     );
