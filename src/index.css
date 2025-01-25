@@ -48,7 +48,8 @@ PAGE
 }
 
 .app-icon {
-  width: 3rem;
+  height: 3rem;
+  margin: 1rem 0 0 1rem;
 }
 
 .tab-selection {

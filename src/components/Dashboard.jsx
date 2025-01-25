@@ -11,6 +11,7 @@ import FatherBoard from './FatherBoard';
 import Settings from './Settings';
 import LinkBoard from './LinkBoard';
 import AnalyticBoard from './AnalyticBoard';
+import appIcon from '../assets/app.svg'
 
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('Dashboard');
@@ -73,7 +74,7 @@ const Dashboard = () => {
     return (
         <div className="dashboard-container">
             <header className="dashboard-header">
-                <img src="logo.png" alt="Company Logo" className="logo" />
+                <img src={appIcon} alt="Company Logo" className="logo" />
                 <h2 className='deadToMe'>{getGreeting()}</h2>
                 <button className="create-button" onClick={() => setIsModalOpen(true)}>Create New</button>
                 <img className="logout-button" alt='Logout Button' src={logoutIcon} onClick={() => handleLogout()} />

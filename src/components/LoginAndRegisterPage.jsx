@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../index.css";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+import appIcon from '../assets/app.svg'
 
 const LoginAndRegisterPage = () => {
   const [activeTab, setActiveTab] = useState("register");
@@ -14,7 +15,7 @@ const LoginAndRegisterPage = () => {
     <div className="login-register-container">
       <ToastContainer></ToastContainer>
       <div className="header">
-        <img src="....." alt="Main App Icon" className="app-icon"/>
+        <img src={appIcon} alt="Main App Icon" className="app-icon"/>
         <div className="tab-selection">
           <button
             className={`tab ${activeTab === "login" ? "active" : ""}`}

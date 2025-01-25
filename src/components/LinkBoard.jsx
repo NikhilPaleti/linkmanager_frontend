@@ -6,6 +6,7 @@ import cpImg from '../assets/copy.svg';
 const LinkBoard = () => {
   const [links, setLinks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const linksPerPage = 10;
   const baseURL = window.location.origin; 
   const [hasExpiry, setHasExpiry] = useState(false);
@@ -86,10 +87,14 @@ const LinkBoard = () => {
     }
   };
 
-  const totalPages = Math.ceil(links.length / linksPerPage);
+  const filteredLinks = links.filter(link => 
+    link.remarks?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredLinks.length / linksPerPage);
   const indexOfLastLink = currentPage * linksPerPage;
   const indexOfFirstLink = indexOfLastLink - linksPerPage;
-  const currentLinks = links.slice(indexOfFirstLink, indexOfLastLink);
+  const currentLinks = filteredLinks.slice(indexOfFirstLink, indexOfLastLink);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -103,6 +108,22 @@ const LinkBoard = () => {
         <p className="no-links">No links found</p>
       ) : (
         <>
+          <div className="search-container" style={{ marginBottom: '1rem' }}>
+            <input
+              type="text"
+              placeholder="Search by remarks"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+              style={{
+                padding: '0.5rem',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                width: '250px'
+              }}
+            />
+          </div>
+
           <table className="linkboard-table">
             <thead>
               <tr className="table-header">

@@ -12,21 +12,51 @@ const Rerouter = () => {
     const [ipAddress, setIpAddress] = useState('');
     const [currentTime, setCurrentTime] = useState('');
 
+
+
     useEffect(() => {
-            const getBrowserName = () => {
-            const userAgent = navigator.userAgent;
-            let browser = 'Unknown';
-            if (userAgent.indexOf('Chrome') > -1) {
-                browser = 'Chrome';
-            } else if (userAgent.indexOf('Firefox') > -1) {
-                browser = 'Firefox';
-            } else if (userAgent.indexOf('Safari') > -1) {
-                browser = 'Safari';
-            } else if (userAgent.indexOf('MSIE') > -1 || userAgent.indexOf('Trident') > -1) {
-                browser = 'Internet Explorer';
+        function getBrowserName() {
+            const test = regexp => {
+              return regexp.test(navigator.userAgent);
+            };
+          
+            console.log(navigator.userAgent);
+          
+            if (test(/opr\//i) || !!window.opr) {
+              return 'Opera';
+            } else if (test(/edg/i)) {
+              return 'MS Edge';
+            } else if (test(/chrome|chromium|crios/i)) {
+              return 'Chromium';
+            } else if (test(/firefox|fxios/i)) {
+              return 'Firefox';
+            } else if (test(/safari/i)) {
+              return 'Safari';
+            } else if (test(/trident/i)) {
+              return 'IExplorer';
+            } else {
+              return 'Unknown';
             }
-            setBrowserName(browser);
-        };
+          }
+          
+          const browserType = getBrowserName();
+          setBrowserName(browserType);
+
+        //     const getBrowserName = () => {
+        //     const userAgent = navigator.userAgent;
+        //     let browser = 'Unknown';
+        //     console.log(userAgent)
+        //     if (userAgent.indexOf('Chrome') > -1) {
+        //         browser = 'Chrome';
+        //     } else if (userAgent.indexOf('Firefox') > -1) {
+        //         browser = 'Firefox';
+        //     } else if (userAgent.indexOf('Safari') > -1) {
+        //         browser = 'Safari';
+        //     } else if (userAgent.indexOf('MSIE') > -1 || userAgent.indexOf('Trident') > -1) {
+        //         browser = 'Internet Explorer';
+        //     }
+        //     setBrowserName(browser);
+        // };
 
         const getIpAddress = async () => {
             try {
