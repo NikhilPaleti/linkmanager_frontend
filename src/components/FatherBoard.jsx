@@ -17,10 +17,10 @@ const FatherBoard = () => {
         userLinks.forEach(link => {
             link.clicks.forEach(click => {
                 total += 1;
-                console.log("ummm", click.time)
+                // console.log("ummm", click.time)
                 if (click.time !== "") {
                     const date = new Date(click.click_time).toDateString();
-                    console.log("wein", date)
+                    // console.log("wein", date)
                     if (clicksDate[date]) {
                         clicksDate[date] += 1;
                     } else {
@@ -88,7 +88,7 @@ const FatherBoard = () => {
     return (
         <div style={{ height:'100%', display: 'flex', flexDirection:'column', justifyContent:'space-between', alignItems:'center'}}>
             <h1>Link Statistics</h1>
-            <p>Total Clicks: {totalClicks}</p>
+            <p style={{color: '#1b48da'}}>Total Clicks: {totalClicks}</p>
             <div className="barChart-container">
                 <div className="bc1">
                     <p>Clicks by Date</p>

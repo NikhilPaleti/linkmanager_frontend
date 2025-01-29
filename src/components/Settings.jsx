@@ -9,10 +9,10 @@ const Settings = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        console.log(`https://linkmanager-backend.onrender.com/fetchuser/${localStorage.getItem('fp2_username')}`)
+        // console.log(`https://linkmanager-backend.onrender.com/fetchuser/${localStorage.getItem('fp2_username')}`)
         const response = await fetch(`https://linkmanager-backend.onrender.com/fetchuser/${localStorage.getItem('fp2_username')}`);
         const data = await response.json()
-        console.log(data.phoneno)
+        // console.log(data.phoneno)
         if (response.ok) {
           setUsername(data.username);
           setEmail(data.email);

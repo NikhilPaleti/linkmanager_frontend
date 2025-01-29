@@ -44,7 +44,7 @@ const LoginForm = () => {
     e.preventDefault(); 
 
     const userData = { username, password };
-    console.log(userData)
+    // console.log(userData)
 
     try {
       const response = await fetch('https://linkmanager-backend.onrender.com/login', { 
@@ -61,7 +61,7 @@ const LoginForm = () => {
         localStorage.setItem('fp2_username', userData.username);
         window.location.href = '/dashboard'
       } else {
-        console.log(data)
+        // console.log(data)
         toast.error("Invalid credentials");
       }
     } catch (error) {
@@ -109,7 +109,7 @@ const RegisterForm = () => {
     }
 
     const userData = { username, email, phoneno, password };
-    console.log(userData)
+    // console.log(userData)
     fetch('https://linkmanager-backend.onrender.com/register', {
       method: 'POST',
       headers: {

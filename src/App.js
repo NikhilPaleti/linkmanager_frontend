@@ -8,6 +8,7 @@ function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
+        fetch('https://linkmanager-backend.onrender.com') 
         const token = localStorage.getItem('fp2_user_jwt');
         if (token) {
             setIsLoggedIn(true);

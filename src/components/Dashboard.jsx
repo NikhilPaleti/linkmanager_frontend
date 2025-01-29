@@ -26,9 +26,9 @@ const Dashboard = () => {
     const getGreeting = () => {
         const hour = new Date().getHours();
         const useris = localStorage.getItem('fp2_username');
-        if (hour < 12) return 'Good Morning, '+useris;
-        if (hour < 18) return 'Good Afternoon, '+useris;
-        return 'Good Evening, '+useris;
+        if (hour < 12) return '🌤️ Good Morning, '+useris;
+        if (hour < 18) return '☀️ Good Afternoon, '+useris;
+        return '🌜 Good Evening, '+useris;
     };
 
     const handleLogout = () => {
@@ -37,7 +37,8 @@ const Dashboard = () => {
         window.location.href = '/'
     };
 
-    const handleCreateLink = async () => {
+    const handleCreateLink = async (e) => {
+        e.preventDefault();
         try {
             const response = await fetch('https://linkmanager-backend.onrender.com/createlinks', {
                 method: 'POST',
@@ -119,9 +120,8 @@ const Dashboard = () => {
                             />
                         )}
                         <div className="modal-footer">
-                            <button style={{backgroundColor:"#00000000", color: "black"}} onClick={() => setIsModalOpen(false)}>Cancel</button>
-                            <button>Confirm</button> 
-                        {/* onClick={handleCreateLink} */}
+                            <button type="button" style={{backgroundColor:"#00000000", color: "black"}} onClick={() => setIsModalOpen(false)}>Cancel</button>
+                            <button type="submit">Confirm</button>
                         </div>
                     </form>
                     </div>

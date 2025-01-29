@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AnalyticBoard = () => {
   const [links, setLinks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState(null);
   const clicksPerPage = 10;
   const baseURL = window.location.origin; 
 
@@ -17,7 +21,7 @@ const AnalyticBoard = () => {
       const data = await response.json(); 
       setLinks(data);
     } catch (error) {
-      console.error('Error fetching links:', error);
+      toast.error('Error fetching links:', error);
     }
   };
 
@@ -39,7 +43,39 @@ const AnalyticBoard = () => {
 
   const indexOfLastClick = currentPage * clicksPerPage;
   const indexOfFirstClick = indexOfLastClick - clicksPerPage;
-  const displayedClicks = currentClicks.slice(indexOfFirstClick, indexOfLastClick);
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortIcon = (field) => {
+    if (sortField !== field) return '↕️';
+    return sortDirection === 'asc' ? '↑' : '↓';
+  };
+
+  let sortedClicks = [...currentClicks];
+  if (sortField) {
+    sortedClicks.sort((a, b) => {
+      let compareA = a[sortField];
+      let compareB = b[sortField];
+      
+      if (sortField === 'click_time') {
+        compareA = new Date(compareA);
+        compareB = new Date(compareB);
+      }
+
+      if (compareA < compareB) return sortDirection === 'asc' ? -1 : 1;
+      if (compareA > compareB) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  const displayedClicks = sortedClicks.slice(indexOfFirstClick, indexOfLastClick);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -49,6 +85,7 @@ const AnalyticBoard = () => {
 
   return (
     <div className="analyticboard-container">
+      <ToastContainer />
       {currentClicks.length === 0 ? (
         <p className="no-clicks">No clicks found</p>
       ) : (
@@ -56,10 +93,16 @@ const AnalyticBoard = () => {
           <table className="analyticboard-table">
             <thead>
               <tr className="table-header">
-                <th>Click Time</th>
-                <th>Original URL</th>
+                <th onClick={() => handleSort('click_time')} style={{ cursor: 'pointer' }}>
+                  Click Time {getSortIcon('click_time')}
+                </th>
+                <th onClick={() => handleSort('original_link')} style={{ cursor: 'pointer' }}>
+                  Original URL {getSortIcon('original_link')}
+                </th>
                 <th>Short URL</th>
-                <th>IP Address</th>
+                <th onClick={() => handleSort('ip_addr')} style={{ cursor: 'pointer' }}>
+                  IP Address {getSortIcon('ip_addr')}
+                </th>
                 <th>User Device</th>
               </tr>
             </thead>

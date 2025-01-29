@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import DeleteIcon from '../assets/delete.svg';
 import EditIcon from '../assets/pencil.svg';
 import cpImg from '../assets/copy.svg';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LinkBoard = () => {
   const [links, setLinks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortField, setSortField] = useState(null);
+  const [sortDirection, setSortDirection] = useState(null);
   const linksPerPage = 10;
   const baseURL = window.location.origin; 
   const [hasExpiry, setHasExpiry] = useState(false);
@@ -29,7 +33,7 @@ const LinkBoard = () => {
       const data = await response.json(); 
       setLinks(data);
     } catch (error) {
-      console.error('Error fetching links:', error);
+      toast.error('Error fetching links:', error);
     }
   };
 
@@ -43,7 +47,7 @@ const LinkBoard = () => {
         fetchLinks(); 
       }
     } catch (error) {
-      console.error('Error deleting link:', error);
+      toast.error('Error deleting link:', error);
     }
   };
 
@@ -60,7 +64,7 @@ const LinkBoard = () => {
       setHasExpiry(!!data.expiry_date);
       setShowEditModal(true);
     } catch (error) {
-      console.error('Error fetching link details:', error);
+      toast.error('Error fetching link details:', error);
     }
   };
 
@@ -80,21 +84,61 @@ const LinkBoard = () => {
 
       if (response.ok) {
         setShowEditModal(false);
+        toast.success("Updated the link")
         fetchLinks();
       }
     } catch (error) {
-      console.error('Error updating link:', error);
+      toast.error('Error updating link:', error);
+      // console.error('Error updating link:', error);
     }
+  };
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortIcon = (field) => {
+    if (sortField !== field) return '↕️';
+    return sortDirection === 'asc' ? '↑' : '↓';
+  };
+
+  const getStatus = (link) => {
+    if (!link.expiry_date) return "Active";
+    return new Date() < new Date(link.expiry_date) ? "Active" : "Inactive";
   };
 
   const filteredLinks = links.filter(link => 
     link.remarks?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredLinks.length / linksPerPage);
+  let sortedLinks = [...filteredLinks];
+  if (sortField) {
+    sortedLinks.sort((a, b) => {
+      let compareA, compareB;
+      
+      if (sortField === 'status') {
+        compareA = getStatus(a);
+        compareB = getStatus(b);
+      } else {
+        compareA = a[sortField];
+        compareB = b[sortField];
+      }
+
+      if (compareA < compareB) return sortDirection === 'asc' ? -1 : 1;
+      if (compareA > compareB) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  const totalPages = Math.ceil(sortedLinks.length / linksPerPage);
   const indexOfLastLink = currentPage * linksPerPage;
   const indexOfFirstLink = indexOfLastLink - linksPerPage;
-  const currentLinks = filteredLinks.slice(indexOfFirstLink, indexOfLastLink);
+  const currentLinks = sortedLinks.slice(indexOfFirstLink, indexOfLastLink);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -104,6 +148,7 @@ const LinkBoard = () => {
 
   return (
     <div className="linkboard-container">
+      <ToastContainer></ToastContainer>
       {links.length === 0 ? (
         <p className="no-links">No links found</p>
       ) : (
@@ -127,11 +172,15 @@ const LinkBoard = () => {
           <table className="linkboard-table">
             <thead>
               <tr className="table-header">
-                <th>Original URL</th>
+                <th onClick={() => handleSort('original_link')} style={{ cursor: 'pointer' }}>
+                  Original URL {getSortIcon('original_link')}
+                </th>
                 <th>Short URL</th>
                 <th>Remarks</th>
                 <th>Total Clicks</th>
-                <th>Status</th>
+                <th onClick={() => handleSort('status')} style={{ cursor: 'pointer' }}>
+                  Status {getSortIcon('status')}
+                </th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -152,13 +201,7 @@ const LinkBoard = () => {
                   </td>
                   <td>{link.remarks}</td>
                   <td>{link.clicks.length}</td>
-                  <td>
-                    {link.expiry_date ? (
-                      new Date() < new Date(link.expiry_date) ? 
-                        "Active" : 
-                        "Inactive"
-                    ) : "Active"}
-                  </td>
+                  <td>{getStatus(link)}</td>
                   <td style={{display:'flex', flexDirection:'row'}}>
                     <button
                       onClick={() => handleDelete(link.short_link)}

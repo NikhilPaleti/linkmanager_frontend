@@ -20,7 +20,7 @@ const Rerouter = () => {
               return regexp.test(navigator.userAgent);
             };
           
-            console.log(navigator.userAgent);
+            // console.log(navigator.userAgent);
           
             if (test(/opr\//i) || !!window.opr) {
               return 'Opera';
@@ -66,7 +66,7 @@ const Rerouter = () => {
                 // console.log("dayta", data)
                 setIpAddress(data.ip);
             } catch (error) {
-                console.error('Error fetching IP address:', error);
+                toast.error('Error fetching IP address:', error);
             }
         };
 
@@ -130,10 +130,10 @@ const Rerouter = () => {
                     }
                 }
                 } else {
-                    console.error(data.error);
+                    toast.error(data.error);
                 }
             } catch (error) {
-                console.error('Error fetching link data:', error);
+                toast.error('Error fetching link data:', error);
             }
         };
         
