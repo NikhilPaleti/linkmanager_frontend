@@ -222,7 +222,7 @@ CSS
   padding: 0;
   border-radius: 0.5rem;
   width: 30vw;
-  height: 50vh;
+  /* height: 50vh; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
